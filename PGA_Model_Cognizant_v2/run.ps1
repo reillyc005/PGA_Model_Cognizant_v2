@@ -18,5 +18,10 @@ Write-Host "Running model..."
 
 & $PY -m pga_model --mode pretournament
 
+if ($LASTEXITCODE -ne 0) {
+  Write-Host "First run failed (exit=$LASTEXITCODE). Retrying with --refresh..."
+  & $PY -m pga_model --mode pretournament --refresh
+}
+
 Write-Host "Done. ExitCode=$LASTEXITCODE"
 exit $LASTEXITCODE

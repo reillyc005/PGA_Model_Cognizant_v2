@@ -16,6 +16,8 @@ def cli() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--mode", default="pretournament", choices=["pretournament"])
     ap.add_argument("--seed", type=int, default=None)
+    ap.add_argument("--refresh", action="store_true", default=False,
+                    help="Bypass cache for all endpoints (force fresh fetch)")
     args = ap.parse_args()
 
     cfg = load_yaml("config/model.yaml")
@@ -27,18 +29,18 @@ def cli() -> int:
     log("PGA_Model_Cognizant_v2 starting (pretournament)")
 
     try:
-        ev = resolve_event()
+        ev = resolve_event(refresh=args.refresh)
         log(f"Event: {ev['event_name']} | Course: {ev['course']} | Field: {ev['field_count']}")
 
-        skill_l24 = fetch_skill_ratings()
+        skill_l24 = fetch_skill_ratings(refresh=args.refresh)
         # DataGolf doesn't expose true last-8 rounds here; we keep the L24/L8 blend interface.
         # If you later add a dedicated form endpoint, wire it into skill_l8.
         skill_l8 = None
 
-        decomp = fetch_player_decomp()
+        decomp = fetch_player_decomp(refresh=args.refresh)
 
-        approach_l24 = fetch_approach_skill(period="l24")
-        approach_l12 = fetch_approach_skill(period="l12")
+        approach_l24 = fetch_approach_skill(period="l24", refresh=args.refresh)
+        approach_l12 = fetch_approach_skill(period="l12", refresh=args.refresh)
 
         df = build_features(
             players=ev["players"],

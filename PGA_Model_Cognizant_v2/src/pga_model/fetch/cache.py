@@ -13,7 +13,9 @@ def _key(source: str, endpoint: str, params: dict) -> str:
     base = f"{source}|{endpoint}|{items}"
     return hashlib.sha256(base.encode("utf-8")).hexdigest()
 
-def cache_read(source: str, endpoint: str, params: dict, ttl_seconds: int) -> tuple[bool, Any]:
+def cache_read(source: str, endpoint: str, params: dict, ttl_seconds: int, refresh: bool = False) -> tuple[bool, Any]:
+    if refresh:
+        return False, None
     RAW_DIR.mkdir(parents=True, exist_ok=True)
     k = _key(source, endpoint, params)
     fp = RAW_DIR / f"{source}_{k}.json"
