@@ -1,0 +1,40 @@
+projection:
+  mode: pga_national_accuracy
+  weights:
+    SG_TOTAL: 0.58
+    APPROACH_WEIGHTED: 0.23
+    COURSE_HISTORY: 0.13
+    COURSE_FIT: 0.06
+    BIG_NUM: 0.08
+    STABILITY: 0.06
+    PENALTY_AVOID: 0.05
+  approach:
+    distance_weights:
+      '150_200': 0.75
+      200_plus: 0.25
+    period_blend:
+      l24: 0.65
+      l12: 0.35
+    weather_cap_abs: 0.12
+sg_blend:
+  l24_weight: 0.6
+  l8_weight: 0.4
+sim:
+  n_sims: 20000
+  seed: 42
+  variance_multiplier: 1.12
+course_history:
+  enabled: true
+  min_rounds: 4
+  recency_decay: 0.9
+similar_courses:
+  enabled: true
+  weight: 0.06
+weather:
+  enabled: true
+guardrails:
+  max_fill_player_pct_warn: 0.2
+  max_fill_player_pct_fail: 0.5
+  max_p_t10: 0.55
+  max_p_t40: 0.85
+  max_p_mc: 0.95

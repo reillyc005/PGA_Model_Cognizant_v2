@@ -1,0 +1,10 @@
+[2026-02-26T04:08:21+00:00] PGA_Model_Cognizant_v2 starting (pretournament)
+[2026-02-26T04:08:21+00:00] DataGolf cache hit: schedule
+[2026-02-26T04:08:21+00:00] Resolved event_id=10 (Cognizant Classic)
+[2026-02-26T04:08:21+00:00] DataGolf cache hit: pre_tournament
+[2026-02-26T04:08:21+00:00] Event: Cognizant Classic | Course: PGA National Resort (The Champion Course) | Field: 0
+[2026-02-26T04:08:21+00:00] DataGolf cache hit: skill_ratings
+[2026-02-26T04:08:21+00:00] DataGolf cache hit: player_decomp
+[2026-02-26T04:08:21+00:00] DataGolf cache hit: approach_skill
+[2026-02-26T04:08:21+00:00] DataGolf cache hit: approach_skill
+[2026-02-26T04:08:21+00:00] FATAL: 'Player'

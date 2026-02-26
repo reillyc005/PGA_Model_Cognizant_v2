@@ -1,0 +1,11 @@
+base_url: https://feeds.datagolf.com
+endpoints:
+  schedule: /get-schedule
+  pre_tournament: /preds/pre-tournament
+  skill_ratings: /preds/skill-ratings
+  approach_skill: /preds/approach-skill
+  player_decomp: /preds/player-decompositions
+  field_updates: /field-updates
+defaults:
+  file_format: json
+  tour: pga
