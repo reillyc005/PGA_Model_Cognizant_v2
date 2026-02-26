@@ -20,7 +20,7 @@ def _ttl(endpoint_key: str) -> int:
         return 24 * 3600
     return 6 * 3600
 
-def _req(endpoint_key: str, params: dict | None = None, *, attempts: int = 3, timeout: int = 30) -> Dict[str, Any]:
+def _req(endpoint_key: str, params: dict | None = None, *, attempts: int = 3, timeout: int = 30, refresh: bool = False) -> Dict[str, Any]:
     cfg = _cfg()
     base = str(cfg.get("base_url", "")).rstrip("/")
     eps = cfg.get("endpoints", {}) or {}
@@ -39,7 +39,7 @@ def _req(endpoint_key: str, params: dict | None = None, *, attempts: int = 3, ti
 
     # cache
     ttl = _ttl(endpoint_key)
-    hit, payload = cache_read("datagolf", endpoint, p, ttl)
+    hit, payload = cache_read("datagolf", endpoint, p, ttl, refresh=refresh)
     if hit:
         log(f"DataGolf cache hit: {endpoint_key}")
         return payload
@@ -68,18 +68,17 @@ def _req(endpoint_key: str, params: dict | None = None, *, attempts: int = 3, ti
 
     raise DataGolfError(last_err or "Unknown DataGolf request failure")
 
-def fetch_schedule(tour: str = "pga", upcoming_only: bool = True) -> dict:
-    return _req("schedule", {"tour": tour, "upcoming_only": "yes" if upcoming_only else "no"})
+def fetch_schedule(tour: str = "pga", upcoming_only: bool = True, refresh: bool = False) -> dict:
+    return _req("schedule", {"tour": tour, "upcoming_only": "yes" if upcoming_only else "no"}, refresh=refresh)
 
-def fetch_skill_ratings(tour: str = "pga", display: str = "value") -> dict:
-    return _req("skill_ratings", {"tour": tour, "display": display})
+def fetch_skill_ratings(tour: str = "pga", display: str = "value", refresh: bool = False) -> dict:
+    return _req("skill_ratings", {"tour": tour, "display": display}, refresh=refresh)
 
-def fetch_player_decomp(tour: str = "pga") -> dict:
-    return _req("player_decomp", {"tour": tour})
+def fetch_player_decomp(tour: str = "pga", refresh: bool = False) -> dict:
+    return _req("player_decomp", {"tour": tour}, refresh=refresh)
 
-def fetch_approach_skill(tour: str = "pga", period: str = "l24") -> dict:
-    return _req("approach_skill", {"tour": tour, "period": period})
+def fetch_approach_skill(tour: str = "pga", period: str = "l24", refresh: bool = False) -> dict:
+    return _req("approach_skill", {"tour": tour, "period": period}, refresh=refresh)
 
-
-def fetch_pre_tournament(event_id: int, tour: str = "pga") -> dict:
-    return _req("pre_tournament", {"tour": tour, "event_id": int(event_id), "odds_format": "percent"})
+def fetch_pre_tournament(event_id: int, tour: str = "pga", refresh: bool = False) -> dict:
+    return _req("pre_tournament", {"tour": tour, "event_id": int(event_id), "odds_format": "percent"}, refresh=refresh)

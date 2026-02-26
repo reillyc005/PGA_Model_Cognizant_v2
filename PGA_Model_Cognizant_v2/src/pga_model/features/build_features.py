@@ -46,6 +46,15 @@ def _extract_approach(payload: dict) -> pd.DataFrame:
         for k,v in p.items():
             if isinstance(v,(int,float)) and k.startswith("sg_"):
                 row[k]=float(v)
+            elif isinstance(v,(int,float)) and "_sg_per_shot" in k:
+                # DataGolf approach keys like 150_200_fw_sg_per_shot -> sg_150_200
+                m = re.match(r'^(\d+)_(\d+)_\w+_sg_per_shot$', k)
+                if m:
+                    row[f"sg_{m.group(1)}_{m.group(2)}"]=float(v)
+                else:
+                    m2 = re.match(r'^over_(\d+)_\w+_sg_per_shot$', k)
+                    if m2:
+                        row[f"sg_{m2.group(1)}_999"]=float(v)
             if isinstance(v,(int,float)) and ("poor" in k and "avoid" in k):
                 row[k]=float(v)
         # overall poor shot avoid if present
@@ -118,8 +127,6 @@ def build_features(players: list[dict], skill_l24: dict, skill_l8: dict|None, de
     df["COURSE_FIT"]=compute_course_fit(df)
 
     # Approach skill (DataGolf-compliant): blend l24 + l12, then distance weight 150-200 vs 200+
-    df["APPROACH_WEIGHTED"]=np.nan
-    df["POOR_SHOT_AVOID"]=np.nan
     if approach_l24 or approach_l12:
         ap24=_extract_approach(approach_l24) if approach_l24 else pd.DataFrame(columns=["name_norm"])
         ap12=_extract_approach(approach_l12) if approach_l12 else pd.DataFrame(columns=["name_norm"])
@@ -205,6 +212,11 @@ def build_features(players: list[dict], skill_l24: dict, skill_l8: dict|None, de
                 aw.append(sum(v*w for v,w in parts)/sw)
         ap_out["APPROACH_WEIGHTED"]=aw
         df=df.merge(ap_out[["name_norm","APPROACH_WEIGHTED","poor"]].rename(columns={"poor":"POOR_SHOT_AVOID"}), on="name_norm", how="left")
+
+    if "APPROACH_WEIGHTED" not in df.columns:
+        df["APPROACH_WEIGHTED"]=np.nan
+    if "POOR_SHOT_AVOID" not in df.columns:
+        df["POOR_SHOT_AVOID"]=np.nan
 
     # Penalty avoid feature: combine poor-shot avoid (positive) and BIG_NUM (negative)
     # z-score later in composite; just keep raw
